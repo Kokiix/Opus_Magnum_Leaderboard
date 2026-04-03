@@ -51,8 +51,9 @@ fn main() {
         )
         .unwrap();
 
+    // Watcher runs on separate thread, so we want to totally block this one
     loop {
-        std::thread::sleep(Duration::from_millis(1000));
+        std::thread::sleep(Duration::from_millis(10000));
     }
 }
 
