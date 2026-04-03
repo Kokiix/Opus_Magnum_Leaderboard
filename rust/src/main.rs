@@ -22,6 +22,7 @@ impl PartialOrd for SolutionStats {
 }
 
 fn main() {
+    let mut user = "koki";
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
         cost: 0,
