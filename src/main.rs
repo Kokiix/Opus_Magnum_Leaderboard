@@ -8,6 +8,12 @@ struct SolutionStats {
     sum: u16,
 }
 
+impl PartialEq for SolutionStats {
+    fn eq(&self, other: &Self) -> bool {
+        self.sum == other.sum
+    }
+}
+
 fn main() {
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
@@ -57,7 +63,9 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     };
 
     if let Ok(data) = fs::read(path) {
-        if let Some(new_stats) = parse_solution_stats(&data) {
+        if let Some(new_stats) = parse_solution_stats(&data)
+            && new_stats != *stats
+        {
             *stats = new_stats;
             println!(
                 "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
