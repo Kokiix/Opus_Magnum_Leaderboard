@@ -16,7 +16,6 @@ fn main() {
         sum: 0,
     };
 
-    // get directory with solution files
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
     let solution_dir = fs::read_dir(&base_path)
         .expect("Could not read Opus Magnum directory")
@@ -25,7 +24,6 @@ fn main() {
         .map(|entry| entry.path())
         .expect("Could not find a SteamID folder in Opus Magnum directory");
 
-    // set up debounced file watcher to check changed *.solution files every second
     let mut latest_solution_debounce = new_debouncer(
         Duration::from_secs(1),
         move |result: DebounceEventResult| match result {
@@ -39,7 +37,6 @@ fn main() {
     )
     .unwrap();
 
-    // point watcher to dir
     latest_solution_debounce
         .watcher()
         .watch(
@@ -49,7 +46,7 @@ fn main() {
         .unwrap();
 
     loop {
-        std::thread::sleep(Duration::from_millis(10000));
+        std::thread::sleep(Duration::from_millis(1000));
     }
 }
 
@@ -76,14 +73,13 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
 fn parse_solution_stats(data: &[u8]) -> Option<SolutionStats> {
     let mut cursor = 0;
 
-    // version number (4 bytes) == 7
+    // Ensure version number (4 bytes) == 7
     if data.len() < 4 || u32::from_le_bytes(data[0..4].try_into().ok()?) != 7 {
         return None;
     }
     cursor += 4;
 
-    // TODO: only read the first bit
-    // skip string names of the puzzle and the solution file
+    // AI-generated, likely not totally efficient
     fn skip_vlq_string(data: &[u8], cursor: &mut usize) -> Option<()> {
         let mut len: usize = 0;
         let mut shift = 0;
@@ -105,36 +101,23 @@ fn parse_solution_stats(data: &[u8]) -> Option<SolutionStats> {
     skip_vlq_string(data, &mut cursor)?;
     skip_vlq_string(data, &mut cursor)?;
 
-    // 4. Solved Flag (4 bytes)
-    if cursor + 4 > data.len() {
+    if cursor + 28 > data.len() {
         return None;
     }
-    let solved = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?);
+
+    let is_solved = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?);
+    if is_solved == 0 {
+        return None;
+    }
     cursor += 4;
 
-    if solved == 0 {
-        return None;
-    }
-
-    // 5. Extract Metrics (Checker Block)
-    // Markers (0, 1, 2, 3) are interleaved between data.
-    // 4 bytes: Marker 0, 4 bytes: Cycles, 4 bytes: Marker 1, 4 bytes: Cost, 4 bytes: Marker 2, 4 bytes: Area
-    // (There is also Marker 3 and Instructions, but we stop at Area)
-    if cursor + 24 > data.len() {
-        return None;
-    }
-
-    cursor += 4; // Skip Marker 0
+    // 4 byte markers interleaved between data
+    cursor += 4;
     let cycles = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?) as u16;
-    cursor += 4;
-
-    cursor += 4; // Skip Marker 1
+    cursor += 8;
     let cost = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?) as u16;
-    cursor += 4;
-
-    cursor += 4; // Skip Marker 2
+    cursor += 8;
     let area = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?) as u16;
-    // ... we could read instructions here if we wanted
 
     Some(SolutionStats {
         cycles,
