@@ -15,6 +15,12 @@ impl PartialEq for SolutionStats {
     }
 }
 
+impl PartialOrd for SolutionStats {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.sum.cmp(&other.sum))
+    }
+}
+
 fn main() {
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
@@ -68,7 +74,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
 
     if let Ok(data) = fs::read(path) {
         if let Some(new_stats) = parse_solution_stats(&data, filename)
-            && new_stats != *stats
+            && new_stats < *stats
             && new_stats.filename == *stats.filename
         {
             *stats = new_stats;
