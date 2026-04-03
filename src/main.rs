@@ -6,11 +6,12 @@ struct SolutionStats {
     cost: u16,
     area: u16,
     sum: u16,
+    filename: String,
 }
 
 impl PartialEq for SolutionStats {
     fn eq(&self, other: &Self) -> bool {
-        self.sum == other.sum
+        self.sum == other.sum && self.filename == other.filename
     }
 }
 
@@ -20,6 +21,7 @@ fn main() {
         cost: 0,
         area: 0,
         sum: 0,
+        filename: "".to_string(),
     };
 
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
@@ -62,24 +64,28 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     if path.extension().is_none_or(|ext| ext != "solution") {
         return;
     };
+    let filename = path.file_stem().unwrap().to_string_lossy().into_owned();
 
     if let Ok(data) = fs::read(path) {
-        if let Some(new_stats) = parse_solution_stats(&data)
+        if let Some(new_stats) = parse_solution_stats(&data, filename)
             && new_stats != *stats
+            && new_stats.filename == *stats.filename
         {
             *stats = new_stats;
-            println!(
-                "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-                path.file_name().unwrap_or_default().to_string_lossy(),
-                stats.cycles,
-                stats.cost,
-                stats.area
-            );
+
+            // Debug print
+            // println!(
+            //     "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
+            //     path.file_name().unwrap_or_default().to_string_lossy(),
+            //     stats.cycles,
+            //     stats.cost,
+            //     stats.area
+            // );
         }
     }
 }
 
-fn parse_solution_stats(data: &[u8]) -> Option<SolutionStats> {
+fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> {
     let mut cursor = 0;
 
     // Ensure version number (4 bytes) == 7
@@ -133,5 +139,6 @@ fn parse_solution_stats(data: &[u8]) -> Option<SolutionStats> {
         cost,
         area,
         sum: cycles + cost + area,
+        filename,
     })
 }
