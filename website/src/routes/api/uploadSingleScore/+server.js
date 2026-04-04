@@ -15,7 +15,7 @@ export const POST = async ({ request }) => {
         .select('sum')
         .eq('level', new_score.level)
         .eq('steam_id', new_score.steam_id)
-        .single();
+        .maybeSingle();
 
     if (error)
         return new Response(`Failed to get existing score: ${error.message}`, { status: 500 });
