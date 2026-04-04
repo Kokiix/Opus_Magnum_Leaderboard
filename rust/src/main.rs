@@ -1,16 +1,9 @@
 use notify_debouncer_mini::*;
-use opus_magnum_summer::SolutionStats;
+use opus_magnum_summer::{SolutionStats, get_steam_id_folder};
 use std::{env, fs, path::Path, time::Duration};
 
 fn main() {
-    let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
-    let steam_id_dir = fs::read_dir(&base_path)
-        .expect("Opus Magnum dir reads properly")
-        .next()
-        .expect("steam_id dir exists")
-        .expect("steam_id dir reads properly");
-    let steam_id = steam_id_dir.file_name().to_string_lossy().into_owned();
-
+    let (steam_id, steam_id_folder) = get_steam_id_folder();
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
         cost: 0,
@@ -36,7 +29,7 @@ fn main() {
     latest_solution_debounce
         .watcher()
         .watch(
-            Path::new(&steam_id_dir.path()),
+            Path::new(&steam_id_folder),
             notify::RecursiveMode::NonRecursive,
         )
         .unwrap();
