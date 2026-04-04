@@ -16,11 +16,7 @@ fn main() {
     let mut latest_solution_debounce = new_debouncer(
         Duration::from_secs(1),
         move |result: DebounceEventResult| match result {
-            Ok(events) => {
-                for e in events {
-                    update_maybe_upload_stats(&e, &mut current_sol_stats);
-                }
-            }
+            Ok(e) => handle_events(e, &mut current_sol_stats),
             Err(e) => println!("Error: {:?}", e),
         },
     )
@@ -40,45 +36,55 @@ fn main() {
     }
 }
 
-fn update_maybe_upload_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
+fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
+    for e in events {
+        match read_new_stats(&e, curr_stats) {
+            None => continue,
+            Some(new_stats) => {
+                // if new_stats.level == curr_stats.level && new_stats.sum < curr_stats.sum {
+                let _ = upload_stats(&new_stats);
+                // }
+                curr_stats.steam_id = new_stats.steam_id.clone();
+                *curr_stats = new_stats;
+            }
+        }
+    }
+}
+
+fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
+    let body = serde_json::to_string(&stats).unwrap();
+    ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
+        .header("Content-Type", "application/json")
+        .header(
+            // TODO: move into env file (and change key bc of commmit history)
+            "very_secret_key",
+            "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
+        )
+        .send(body)?;
+
+    // Debug print
+    println!(
+        "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
+        stats.level, stats.cycles, stats.cost, stats.area
+    );
+
+    return Ok(());
+}
+
+fn read_new_stats(event: &DebouncedEvent, stats: &mut SolutionStats) -> Option<SolutionStats> {
     let path = &event.path;
     if path.extension().is_none_or(|ext| ext != "solution") {
-        return;
+        return None;
     };
-    let filename = path.file_stem().unwrap().to_string_lossy().into_owned();
+    let filename = path
+        .file_stem()
+        .expect("the file has a name")
+        .to_string_lossy()
+        .into_owned();
 
     if let Ok(data) = fs::read(path) {
-        if let Some(mut new_stats) = parse_solution_stats(&data, filename)
-        // && new_stats < *stats
-        {
-            // if new_stats.level != stats.level {
-            //     *stats = new_stats;
-            //     return;
-            // }
-            new_stats.steam_id = stats.steam_id.clone();
-            *stats = new_stats;
-
-            // Drop request if it fails for now
-            let send_stats = || -> Result<(), ureq::Error> {
-                let body = serde_json::to_string(stats).unwrap();
-                ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
-                    .header("Content-Type", "application/json")
-                    .header(
-                        // TODO: move into env file (and change key bc of commmit history)
-                        "very_secret_key",
-                        "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
-                    )
-                    .send(body)?;
-                return Ok(());
-            };
-            if let Err(e) = send_stats() {
-                eprintln!("Failed to send stats :(      {:?}", e);
-            }
-            // Debug print
-            println!(
-                "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-                stats.level, stats.cycles, stats.cost, stats.area
-            );
-        }
+        parse_solution_stats(&data, filename)
+    } else {
+        None
     }
 }
