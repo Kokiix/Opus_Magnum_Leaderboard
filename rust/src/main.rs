@@ -9,12 +9,13 @@ struct SolutionStats {
     cost: u16,
     area: u16,
     sum: u16,
-    filename: String,
+    level: String,
+    player: String,
 }
 
 impl PartialEq for SolutionStats {
     fn eq(&self, other: &Self) -> bool {
-        self.sum == other.sum && self.filename == other.filename
+        self.sum == other.sum && self.level == other.level
     }
 }
 
@@ -25,13 +26,14 @@ impl PartialOrd for SolutionStats {
 }
 
 fn main() {
-    let mut user = "koki";
+    let player = "koki".to_string();
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
         cost: 0,
         area: 0,
         sum: 0,
-        filename: "".to_string(),
+        level: "".to_string(),
+        player,
     };
 
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
@@ -77,10 +79,11 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     let filename = path.file_stem().unwrap().to_string_lossy().into_owned();
 
     if let Ok(data) = fs::read(path) {
-        if let Some(new_stats) = parse_solution_stats(&data, filename)
+        if let Some(mut new_stats) = parse_solution_stats(&data, filename)
         // && new_stats < *stats
         // && new_stats.filename == *stats.filename
         {
+            new_stats.player = stats.player.clone();
             *stats = new_stats;
 
             // Drop request if it fails for now
@@ -102,7 +105,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     }
 }
 
-fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> {
+fn parse_solution_stats(data: &[u8], level: String) -> Option<SolutionStats> {
     let mut cursor = 0;
 
     // Ensure version number (4 bytes) == 7
@@ -156,6 +159,7 @@ fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> 
         cost,
         area,
         sum: cycles + cost + area,
-        filename,
+        level,
+        player: "".to_string(),
     })
 }
