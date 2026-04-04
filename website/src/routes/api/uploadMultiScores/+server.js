@@ -12,14 +12,15 @@ export const POST = async ({ request }) => {
     const levels = newScores.stats.map(s => s.level);
     const steamId = newScores.stats[0]?.steam_id;
 
-    const { data: existingScores } = await supabase
+    const { data: existingScoreList } = await supabase
         .from('scores')
         .select('level, sum')
         .eq('steam_id', steamId)
         .in('level', levels);
-    const existingScores = Object.fromEntries(existingScores.map(s => [s.level, s.sum]));
+    const existingScoreMap = Object.fromEntries(existingScoreList.map(s => [s.level, s.sum]));
+
     const scoresToUpsert = newScores.stats.filter(s => {
-        const prevSum = existingScores[s.level];
+        const prevSum = existingScoreMap[s.level];
         return !prevSum || s.sum < prevSum;
     })
     if (scoresToUpsert.length > 0) {
