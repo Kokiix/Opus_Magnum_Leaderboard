@@ -30,7 +30,8 @@ try {
     lines.forEach(line => {
         if (isSection(line)) {
             sections.push(line);
-            formattedLines.push('---'); // The divider marker
+            if (formattedLines)
+                formattedLines.push('---'); // The divider marker
         } else {
             formattedLines.push(slugify(line));
         }
