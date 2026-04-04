@@ -20,7 +20,7 @@ export async function load() {
 
     let levels = rawLevelNames
         .split('---')
-        .map(x => x.split('\n'))
+        .map(x => x.trim().split('\n'))
         .map(lvlsInChapter =>
             lvlsInChapter.map(lvlName => {
                 if (lvName_to_scoreObj[lvlName]) return lvName_to_scoreObj[lvlName];
