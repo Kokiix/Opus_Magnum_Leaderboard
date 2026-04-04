@@ -14,24 +14,18 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>Test Level</td>
-            <td>100</td>
-            <td>dumpling</td>
-            <td>50</td>
-            <td>5</td>
-            <td>50</td>
-        </tr>
-
-        {#each data.levels as score}
-            <tr>
-                <td>{score.level}</td>
-                <td>{score.sum}</td>
-                <td>{score.username}</td>
-                <td>{score.cost}</td>
-                <td>{score.cycles}</td>
-                <td>{score.area}</td>
-            </tr>
+        {#each data.chapterList as chapter}
+            <tr><th>{chapter.title}</th></tr>
+            {#each chapter.levels as score}
+                <tr>
+                    <td>{score.level}</td>
+                    <td>{score.sum}</td>
+                    <td>{score.username}</td>
+                    <td>{score.cost}</td>
+                    <td>{score.cycles}</td>
+                    <td>{score.area}</td>
+                </tr>
+            {/each}
         {/each}
     </tbody>
 </table>
