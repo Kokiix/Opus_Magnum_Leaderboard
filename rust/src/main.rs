@@ -1,5 +1,5 @@
 use notify_debouncer_mini::*;
-use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_stats};
+use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file};
 use std::{env, fs, path::Path, time::Duration};
 
 fn main() {
@@ -38,7 +38,7 @@ fn main() {
 
 fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
     for e in events {
-        match read_new_stats(&e, curr_stats) {
+        match parse_solution_file(&e.path) {
             None => continue,
             Some(new_stats) => {
                 // if new_stats.level == curr_stats.level && new_stats.sum < curr_stats.sum {
@@ -69,22 +69,4 @@ fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
     );
 
     return Ok(());
-}
-
-fn read_new_stats(event: &DebouncedEvent, stats: &mut SolutionStats) -> Option<SolutionStats> {
-    let path = &event.path;
-    if path.extension().is_none_or(|ext| ext != "solution") {
-        return None;
-    };
-    let filename = path
-        .file_stem()
-        .expect("the file has a name")
-        .to_string_lossy()
-        .into_owned();
-
-    if let Ok(data) = fs::read(path) {
-        parse_solution_stats(&data, filename)
-    } else {
-        None
-    }
 }

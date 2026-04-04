@@ -36,7 +36,21 @@ pub fn get_steam_id_folder() -> (String, PathBuf) {
     return (steam_id, steam_id_dir.path());
 }
 
-pub fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> {
+pub fn parse_solution_file(path: &PathBuf) -> Option<SolutionStats> {
+    if path.extension().is_none_or(|ext| ext != "solution") {
+        return None;
+    };
+    let filename = path
+        .file_stem()
+        .expect("the file has a name")
+        .to_string_lossy()
+        .into_owned();
+    let read_result = fs::read(path);
+    if read_result.is_err() {
+        return None;
+    }
+    let data = read_result.unwrap();
+
     let mut cursor = 0;
 
     // Ensure version number (4 bytes) == 7
@@ -64,8 +78,8 @@ pub fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionSta
         }
         Some(())
     }
-    skip_vlq_string(data, &mut cursor)?;
-    skip_vlq_string(data, &mut cursor)?;
+    skip_vlq_string(&data, &mut cursor)?;
+    skip_vlq_string(&data, &mut cursor)?;
 
     if cursor + 28 > data.len() {
         return None;
