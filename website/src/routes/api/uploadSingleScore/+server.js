@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
 export const POST = async ({ request }) => {
-    console.log("test!");
     // TODO: move to env file
     if (request.headers.get("very_secret_key") != "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=")
         return new Response(null, { status: 404 });

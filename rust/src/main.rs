@@ -110,7 +110,9 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
                     .send(body)?;
                 return Ok(());
             };
-            let _ = send_stats();
+            if let Err(e) = send_stats() {
+                eprintln!("Failed to send stats :(      {:?}", e);
+            }
             // Debug print
             println!(
                 "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
