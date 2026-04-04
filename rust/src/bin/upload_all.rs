@@ -1,11 +1,26 @@
 use std::{collections::HashMap, env, fs};
 
 use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file, upload_stats};
+use serde::Serialize;
+
+#[derive(Serialize)]
+struct BatchUpload {
+    stats: Vec<SolutionStats>,
+}
 
 fn main() {
     let steam_id_folder = get_steam_id_folder();
+    let steam_id = get_steam_id_folder()
+        .parent()
+        .unwrap()
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned();
+
     let mut best_scores: HashMap<String, SolutionStats> = HashMap::new();
     let steam_id_folder_obj = fs::read_dir(&steam_id_folder).expect("no read errors");
+
     for dir_entry in steam_id_folder_obj.flatten() {
         if let Some(stats) = parse_solution_file(&dir_entry.path()) {
             match best_scores.get_mut(&stats.level) {
@@ -21,7 +36,22 @@ fn main() {
         }
     }
 
-    for solution in best_scores.values() {
-        let _ = upload_stats(solution);
-    }
+    let mut batch = BatchUpload {
+        stats: best_scores.into_values().collect(),
+    };
+
+    batch
+        .stats
+        .iter_mut()
+        .for_each(|stats| stats.steam_id = steam_id.clone());
+    let body = serde_json::to_string(&batch).unwrap();
+    ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadMultiScores")
+        .header("Content-Type", "application/json")
+        .header(
+            // TODO: move into env file (and change key bc of commmit history)
+            "very_secret_key",
+            "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
+        )
+        .send(body)
+        .expect("uploaded successfully");
 }

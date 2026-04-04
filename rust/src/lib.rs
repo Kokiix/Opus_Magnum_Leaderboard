@@ -125,6 +125,6 @@ pub fn parse_solution_file(path: &PathBuf) -> Option<SolutionStats> {
         area,
         sum: cycles + cost + area,
         level,
-        steam_id: path.parent().unwrap().to_string_lossy().into_owned(),
+        steam_id: "".to_string(),
     })
 }

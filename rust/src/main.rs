@@ -3,13 +3,20 @@ use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file
 use std::{env, fs, path::Path, time::Duration};
 
 fn main() {
+    let steam_id = get_steam_id_folder()
+        .parent()
+        .unwrap()
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned();
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
         cost: 0,
         area: 0,
         sum: 0,
         level: "".to_string(),
-        steam_id: "".to_string(),
+        steam_id,
     };
 
     let mut latest_solution_debounce = new_debouncer(
@@ -40,8 +47,9 @@ fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
                 // if new_stats.level == curr_stats.level && new_stats.sum < curr_stats.sum {
                 let _ = upload_stats(&new_stats);
                 // }
-                curr_stats.steam_id = new_stats.steam_id.clone();
+                let id = curr_stats.steam_id.clone();
                 *curr_stats = new_stats;
+                curr_stats.steam_id = id;
             }
         }
     }
