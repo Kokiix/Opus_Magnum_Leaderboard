@@ -81,8 +81,11 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     if let Ok(data) = fs::read(path) {
         if let Some(mut new_stats) = parse_solution_stats(&data, filename)
         // && new_stats < *stats
-        && new_stats.level == *stats.level
         {
+            if new_stats.level != stats.level {
+                *stats = new_stats;
+                return;
+            }
             new_stats.player = stats.player.clone();
             *stats = new_stats;
 
