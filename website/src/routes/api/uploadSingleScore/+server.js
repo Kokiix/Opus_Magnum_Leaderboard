@@ -18,7 +18,7 @@ export const POST = async ({ request }) => {
         .single();
 
     if (error)
-        return new Response(error.message, { status: 500 });
+        return new Response(`Failed to get existing score: ${error.message}`, { status: 500 });
 
     // Insert
     if (existingSum && new_score.sum < existingSum) {
@@ -26,7 +26,7 @@ export const POST = async ({ request }) => {
             .from('scores')
             .insert(new_score);
         if (error)
-            return new Response(error.message, { status: 500 });
+            return new Response(`Failed to insert new score: ${error.message}`, { status: 500 });
     }
 
     return new Response(null, { status: 200 });
