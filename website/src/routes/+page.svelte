@@ -23,7 +23,7 @@
             <td>50</td>
         </tr>
 
-        {#each data.scores as score}
+        {#each data.levels as score}
             <tr>
                 <td>{score.level}</td>
                 <td>{score.sum}</td>
