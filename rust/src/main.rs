@@ -4,8 +4,6 @@ use std::{env, fs, path::Path, time::Duration};
 
 fn main() {
     let steam_id = get_steam_id_folder()
-        .parent()
-        .unwrap()
         .file_name()
         .unwrap()
         .to_string_lossy()

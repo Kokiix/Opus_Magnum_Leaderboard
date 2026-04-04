@@ -11,8 +11,6 @@ struct BatchUpload {
 fn main() {
     let steam_id_folder = get_steam_id_folder();
     let steam_id = get_steam_id_folder()
-        .parent()
-        .unwrap()
         .file_name()
         .unwrap()
         .to_string_lossy()
