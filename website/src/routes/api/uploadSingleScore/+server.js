@@ -22,7 +22,7 @@ export const POST = async ({ request }) => {
 
     // Insert
     console.log(existingSum);
-    if (existingSum && new_score.sum < existingSum) {
+    if (!existingSum || new_score.sum < existingSum) {
         const { error } = await supabase
             .from('scores')
             .insert(new_score);
