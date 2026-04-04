@@ -1,3 +1,4 @@
 export const POST = ({request}) => {
-    const scoreData = request.headers.get("stats");
+    const scoreData = request.json();
+    console.log(scoreData);
 }

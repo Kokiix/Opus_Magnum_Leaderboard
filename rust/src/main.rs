@@ -1,6 +1,9 @@
 use notify_debouncer_mini::*;
+use serde::Serialize;
 use std::{env, fs, path::Path, time::Duration};
+use ureq::{Body, http::Response};
 
+#[derive(Serialize)]
 struct SolutionStats {
     cycles: u16,
     cost: u16,
@@ -80,6 +83,13 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
         {
             *stats = new_stats;
 
+            // Drop request if it fails for now
+            let send_stats = || -> Result<(), ureq::Error> {
+                let body = serde_json::to_string(stats).unwrap();
+                ureq::post("https://omleaderboard.vercel.app/api/uploadSingleScore").send(body)?;
+                return Ok(());
+            };
+            let _ = send_stats();
             // Debug print
             // println!(
             //     "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
