@@ -26,20 +26,12 @@ impl PartialOrd for SolutionStats {
 
 fn main() {
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
-    let solution_dir = fs::read_dir(&base_path)
-        .expect("Could not read Opus Magnum directory")
-        .filter_map(|entry| entry.ok())
-        .find(|entry| entry.path().is_dir())
-        .map(|entry| entry.path())
-        .expect("Could not find a SteamID folder in Opus Magnum directory");
-    let steam_id = fs::read_dir(&base_path)
-        .unwrap()
+    let steam_id_dir = fs::read_dir(&base_path)
+        .expect("Opus Magnum dir reads properly")
         .next()
-        .unwrap()
-        .unwrap()
-        .file_name()
-        .to_string_lossy()
-        .into_owned();
+        .expect("steam_id dir exists")
+        .expect("steam_id dir reads properly");
+    let steam_id = steam_id_dir.file_name().to_string_lossy().into_owned();
 
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
@@ -66,7 +58,7 @@ fn main() {
     latest_solution_debounce
         .watcher()
         .watch(
-            Path::new(&solution_dir),
+            Path::new(&steam_id_dir.path()),
             notify::RecursiveMode::NonRecursive,
         )
         .unwrap();
