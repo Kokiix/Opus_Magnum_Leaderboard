@@ -1,16 +1,15 @@
 use notify_debouncer_mini::*;
-use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file};
+use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file, upload_stats};
 use std::{env, fs, path::Path, time::Duration};
 
 fn main() {
-    let (steam_id, steam_id_folder) = get_steam_id_folder();
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
         cost: 0,
         area: 0,
         sum: 0,
         level: "".to_string(),
-        steam_id,
+        steam_id: "".to_string(),
     };
 
     let mut latest_solution_debounce = new_debouncer(
@@ -24,10 +23,7 @@ fn main() {
 
     latest_solution_debounce
         .watcher()
-        .watch(
-            Path::new(&steam_id_folder),
-            notify::RecursiveMode::NonRecursive,
-        )
+        .watch(&get_steam_id_folder(), notify::RecursiveMode::NonRecursive)
         .unwrap();
 
     // Watcher runs on separate thread, so we want to totally block this one
@@ -49,24 +45,4 @@ fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
             }
         }
     }
-}
-
-fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
-    let body = serde_json::to_string(&stats).unwrap();
-    ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
-        .header("Content-Type", "application/json")
-        .header(
-            // TODO: move into env file (and change key bc of commmit history)
-            "very_secret_key",
-            "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
-        )
-        .send(body)?;
-
-    // Debug print
-    println!(
-        "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-        stats.level, stats.cycles, stats.cost, stats.area
-    );
-
-    return Ok(());
 }

@@ -24,16 +24,35 @@ impl PartialOrd for SolutionStats {
     }
 }
 
-pub fn get_steam_id_folder() -> (String, PathBuf) {
+pub fn get_steam_id_folder() -> PathBuf {
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
     let steam_id_dir = fs::read_dir(&base_path)
         .expect("Opus Magnum dir reads properly")
         .next()
         .expect("steam_id dir exists")
         .expect("steam_id dir reads properly");
-    let steam_id = steam_id_dir.file_name().to_string_lossy().into_owned();
 
-    return (steam_id, steam_id_dir.path());
+    return steam_id_dir.path();
+}
+
+pub fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
+    let body = serde_json::to_string(&stats).unwrap();
+    ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
+        .header("Content-Type", "application/json")
+        .header(
+            // TODO: move into env file (and change key bc of commmit history)
+            "very_secret_key",
+            "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
+        )
+        .send(body)?;
+
+    // Debug print
+    println!(
+        "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
+        stats.level, stats.cycles, stats.cost, stats.area
+    );
+
+    return Ok(());
 }
 
 pub fn parse_solution_file(path: &PathBuf) -> Option<SolutionStats> {
@@ -106,6 +125,6 @@ pub fn parse_solution_file(path: &PathBuf) -> Option<SolutionStats> {
         area,
         sum: cycles + cost + area,
         level,
-        steam_id: "".to_string(),
+        steam_id: path.parent().unwrap().to_string_lossy().into_owned(),
     })
 }
