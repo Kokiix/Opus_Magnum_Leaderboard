@@ -98,7 +98,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             // Drop request if it fails for now
             let send_stats = || -> Result<(), ureq::Error> {
                 let body = serde_json::to_string(stats).unwrap();
-                ureq::post("https://omleaderboard.vercel.app/api/uploadSingleScore")
+                ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
                     .header("Content-Type", "application/json")
                     .header(
                         // TODO: move into env file (and change key bc of commmit history)
