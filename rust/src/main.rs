@@ -81,7 +81,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
     if let Ok(data) = fs::read(path) {
         if let Some(mut new_stats) = parse_solution_stats(&data, filename)
         // && new_stats < *stats
-        // && new_stats.filename == *stats.filename
+        && new_stats.level == *stats.level
         {
             new_stats.player = stats.player.clone();
             *stats = new_stats;
@@ -92,7 +92,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
                 ureq::post("https://omleaderboard.vercel.app/api/uploadSingleScore")
                     .header("Content-Type", "application/json")
                     .header(
-                        // Fine while github repo is private
+                        // TODO: move into env file (and change key bc of commmit history)
                         "very_secret_key",
                         "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
                     )
