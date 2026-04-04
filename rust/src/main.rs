@@ -1,6 +1,6 @@
 use notify_debouncer_mini::*;
 use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file, upload_stats};
-use std::{env, fs, path::Path, time::Duration};
+use std::time::Duration;
 
 fn main() {
     let steam_id = get_steam_id_folder()
