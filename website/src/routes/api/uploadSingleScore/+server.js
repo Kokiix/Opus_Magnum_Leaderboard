@@ -25,7 +25,7 @@ export const POST = async ({ request }) => {
     if (!existingScore || newScore.sum < existingScore.sum) {
         const { error } = await supabase
             .from('scores')
-            .insert(newScore);
+            .upsert(newScore);
         if (error)
             return new Response(`Failed to insert new score: ${error.message}`, { status: 500 });
         return new Response(null, { status: 201 });
