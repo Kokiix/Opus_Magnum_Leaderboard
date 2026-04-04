@@ -82,10 +82,10 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
         if let Some(mut new_stats) = parse_solution_stats(&data, filename)
         // && new_stats < *stats
         {
-            if new_stats.level != stats.level {
-                *stats = new_stats;
-                return;
-            }
+            // if new_stats.level != stats.level {
+            //     *stats = new_stats;
+            //     return;
+            // }
             new_stats.player = stats.player.clone();
             *stats = new_stats;
 
@@ -106,16 +106,13 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             // Debug print
             println!(
                 "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-                path.file_name().unwrap_or_default().to_string_lossy(),
-                stats.cycles,
-                stats.cost,
-                stats.area
+                stats.level, stats.cycles, stats.cost, stats.area
             );
         }
     }
 }
 
-fn parse_solution_stats(data: &[u8], level: String) -> Option<SolutionStats> {
+fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> {
     let mut cursor = 0;
 
     // Ensure version number (4 bytes) == 7
@@ -164,6 +161,7 @@ fn parse_solution_stats(data: &[u8], level: String) -> Option<SolutionStats> {
     cursor += 8;
     let area = u32::from_le_bytes(data[cursor..cursor + 4].try_into().ok()?) as u16;
 
+    let level = filename.rsplit_once('-').unwrap().0.to_string();
     Some(SolutionStats {
         cycles,
         cost,
