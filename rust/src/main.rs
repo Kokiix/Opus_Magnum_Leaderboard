@@ -10,7 +10,7 @@ struct SolutionStats {
     area: u16,
     sum: u16,
     level: String,
-    player: String,
+    steam_id: usize,
 }
 
 impl PartialEq for SolutionStats {
@@ -26,16 +26,6 @@ impl PartialOrd for SolutionStats {
 }
 
 fn main() {
-    let player = "koki".to_string();
-    let mut current_sol_stats = SolutionStats {
-        cycles: 0,
-        cost: 0,
-        area: 0,
-        sum: 0,
-        level: "".to_string(),
-        player,
-    };
-
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
     let solution_dir = fs::read_dir(&base_path)
         .expect("Could not read Opus Magnum directory")
@@ -43,6 +33,24 @@ fn main() {
         .find(|entry| entry.path().is_dir())
         .map(|entry| entry.path())
         .expect("Could not find a SteamID folder in Opus Magnum directory");
+    let steam_id = fs::read_dir(&base_path)
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .file_name()
+        .to_string_lossy()
+        .parse()
+        .unwrap();
+
+    let mut current_sol_stats = SolutionStats {
+        cycles: 0,
+        cost: 0,
+        area: 0,
+        sum: 0,
+        level: "".to_string(),
+        steam_id,
+    };
 
     let mut latest_solution_debounce = new_debouncer(
         Duration::from_secs(1),
@@ -86,7 +94,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             //     *stats = new_stats;
             //     return;
             // }
-            new_stats.player = stats.player.clone();
+            new_stats.steam_id = stats.steam_id;
             *stats = new_stats;
 
             // Drop request if it fails for now
@@ -168,6 +176,6 @@ fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> 
         area,
         sum: cycles + cost + area,
         level,
-        player: "".to_string(),
+        steam_id: 0,
     })
 }
