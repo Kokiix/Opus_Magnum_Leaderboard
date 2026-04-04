@@ -1,7 +1,6 @@
 use notify_debouncer_mini::*;
 use serde::Serialize;
 use std::{env, fs, path::Path, time::Duration};
-use ureq::{Body, http::Response};
 
 #[derive(Serialize)]
 struct SolutionStats {
@@ -10,7 +9,7 @@ struct SolutionStats {
     area: u16,
     sum: u16,
     level: String,
-    steam_id: usize,
+    steam_id: String,
 }
 
 impl PartialEq for SolutionStats {
@@ -40,8 +39,7 @@ fn main() {
         .unwrap()
         .file_name()
         .to_string_lossy()
-        .parse()
-        .unwrap();
+        .into_owned();
 
     let mut current_sol_stats = SolutionStats {
         cycles: 0,
@@ -94,7 +92,7 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             //     *stats = new_stats;
             //     return;
             // }
-            new_stats.steam_id = stats.steam_id;
+            new_stats.steam_id = stats.steam_id.clone();
             *stats = new_stats;
 
             // Drop request if it fails for now
@@ -178,6 +176,6 @@ fn parse_solution_stats(data: &[u8], filename: String) -> Option<SolutionStats> 
         area,
         sum: cycles + cost + area,
         level,
-        steam_id: 0,
+        steam_id: "".to_string(),
     })
 }
