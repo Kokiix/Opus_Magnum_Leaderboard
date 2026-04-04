@@ -10,23 +10,24 @@ export const POST = async ({ request }) => {
         'sb_publishable_coM9-yUpcpkfpQfBf7y6Ug_HdbicKL3');
 
     // Check for existence
-    const { data: existingScore, err } = await supabase
+    const { data: existingSum, error } = await supabase
         .from('scores')
         .select('sum')
         .eq('level', new_score.level)
-        .eq('steam_id', new_score.steam_id);
+        .eq('steam_id', new_score.steam_id)
+        .single();
 
-
-    console.log(`fetched data: `, existingScore);
-    console.log(`error: `, err);
+    if (error)
+        return new Response(error.message, { status: 500 });
 
     // Insert
-    // const { error } = await supabase
-    //     .from('scores')
-    //     .upsert(new_score);
+    if (existingSum && new_score.sum < existingSum) {
+        const { error } = await supabase
+            .from('scores')
+            .insert(new_score);
+        if (error)
+            return new Response(error.message, { status: 500 });
+    }
 
-    // if (error)
-    //     return new Response(error.message);
-    // else
     return new Response(null, { status: 200 });
 }
