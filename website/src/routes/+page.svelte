@@ -38,6 +38,7 @@
 
 <style>
     table {
+        border-collapse: collapse;
         border: 2px solid black;
     }
 
