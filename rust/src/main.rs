@@ -89,7 +89,14 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             // Drop request if it fails for now
             let send_stats = || -> Result<(), ureq::Error> {
                 let body = serde_json::to_string(stats).unwrap();
-                ureq::post("https://omleaderboard.vercel.app/api/uploadSingleScore").send(body)?;
+                ureq::post("https://omleaderboard.vercel.app/api/uploadSingleScore")
+                    .header("Content-Type", "application/json")
+                    .header(
+                        // Fine while github repo is private
+                        "very_secret_key",
+                        "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
+                    )
+                    .send(body)?;
                 return Ok(());
             };
             let _ = send_stats();

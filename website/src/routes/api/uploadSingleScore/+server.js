@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
 export const POST = async ({ request }) => {
+    // TODO: move to env file
+    if (request.headers.get("very_secret_key") != "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=")
+        return new Response(null, { status: 404 });
     const data = await request.json();
     const supabase = createClient(
         'https://zeddvrudhdrakfbmzinh.supabase.co',
@@ -11,5 +14,8 @@ export const POST = async ({ request }) => {
         .from('scores')
         .insert(data);
 
-    return new Response(error.message);
+    if (error)
+        return new Response(error.message);
+    else
+        return new Response(null, { status: 200 });
 }
