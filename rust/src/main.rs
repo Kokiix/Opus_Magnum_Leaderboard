@@ -78,8 +78,8 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
 
     if let Ok(data) = fs::read(path) {
         if let Some(new_stats) = parse_solution_stats(&data, filename)
-            && new_stats < *stats
-            && new_stats.filename == *stats.filename
+        // && new_stats < *stats
+        // && new_stats.filename == *stats.filename
         {
             *stats = new_stats;
 
@@ -91,13 +91,13 @@ fn update_sol_stats(event: &DebouncedEvent, stats: &mut SolutionStats) {
             };
             let _ = send_stats();
             // Debug print
-            // println!(
-            //     "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-            //     path.file_name().unwrap_or_default().to_string_lossy(),
-            //     stats.cycles,
-            //     stats.cost,
-            //     stats.area
-            // );
+            println!(
+                "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
+                path.file_name().unwrap_or_default().to_string_lossy(),
+                stats.cycles,
+                stats.cost,
+                stats.area
+            );
         }
     }
 }
