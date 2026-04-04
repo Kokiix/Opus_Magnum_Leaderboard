@@ -10,12 +10,15 @@ export const POST = async ({ request }) => {
         'sb_publishable_coM9-yUpcpkfpQfBf7y6Ug_HdbicKL3');
 
     // Check for existence
-    const { data: existingScore } = await supabase
+    const { data: existingScore, err } = await supabase
         .from('scores')
         .select('sum')
         .eq('level', new_score.level)
         .eq('steam_id', new_score.steam_id);
-    console.log(`fetched data: `, existingScore)
+
+
+    console.log(`fetched data: `, existingScore);
+    console.log(`error: `, err);
 
     // Insert
     // const { error } = await supabase
