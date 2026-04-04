@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 notify-debouncer-mini = "0.6.0"
 ureq = "3.3.0"
+serde = "1.0.228"

@@ -343,6 +343,7 @@ name = "opus_magnum_summer"
 version = "0.1.0"
 dependencies = [
  "notify-debouncer-mini",
+ "serde",
  "ureq",
 ]
 
