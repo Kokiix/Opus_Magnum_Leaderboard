@@ -1,28 +1,6 @@
 use notify_debouncer_mini::*;
-use serde::Serialize;
+use opus_magnum_summer::SolutionStats;
 use std::{env, fs, path::Path, time::Duration};
-
-#[derive(Serialize)]
-struct SolutionStats {
-    cycles: u16,
-    cost: u16,
-    area: u16,
-    sum: u16,
-    level: String,
-    steam_id: String,
-}
-
-impl PartialEq for SolutionStats {
-    fn eq(&self, other: &Self) -> bool {
-        self.sum == other.sum && self.level == other.level
-    }
-}
-
-impl PartialOrd for SolutionStats {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.sum.cmp(&other.sum))
-    }
-}
 
 fn main() {
     let base_path = env::var("USERPROFILE").unwrap() + r"\Documents\My Games\Opus Magnum\";
