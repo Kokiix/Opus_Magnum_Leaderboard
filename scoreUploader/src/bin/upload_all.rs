@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs, io};
 
-use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file};
+use om_score_tracker::{SolutionStats, get_steam_id_folder, parse_solution_file};
 use serde::Serialize;
 
 #[derive(Serialize)]

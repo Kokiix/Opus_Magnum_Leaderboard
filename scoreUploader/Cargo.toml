@@ -1,5 +1,5 @@
 [package]
-name = "opus_magnum_summer"
+name = "om_score_tracker"
 version = "0.1.0"
 edition = "2024"
 
