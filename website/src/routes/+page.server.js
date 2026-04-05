@@ -12,7 +12,6 @@ export async function load() {
         .from('scores')
         .select();
 
-    console.log(scores);
     const lvName_to_scoreObj = Object.fromEntries(scores.map(score => {
         score.username = steamID_to_username[score.steam_id];
         return [score.level, score];
@@ -27,8 +26,6 @@ export async function load() {
                 return { "level": lvlName };
             })
         );
-
-    console.log(levels);
 
     const chapterList = rawChapterNames.split('\n').map((chapName, index) => {
         return {

@@ -41,13 +41,12 @@ fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
     for e in events {
         match parse_solution_file(&e.path) {
             None => continue,
-            Some(new_stats) => {
-                // if new_stats.level == curr_stats.level && new_stats.sum < curr_stats.sum {
-                let _ = upload_stats(&new_stats);
-                // }
-                let id = curr_stats.steam_id.clone();
+            Some(mut new_stats) => {
+                new_stats.steam_id = curr_stats.steam_id.clone();
+                if new_stats.level == curr_stats.level && new_stats.sum < curr_stats.sum {
+                    let _ = upload_stats(&new_stats);
+                }
                 *curr_stats = new_stats;
-                curr_stats.steam_id = id;
             }
         }
     }
