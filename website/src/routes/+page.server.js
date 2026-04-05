@@ -21,12 +21,13 @@ export async function load() {
         .split('---')
         .map(x => x.trim().split('\n'))
         .map(lvlsInChapter =>
-            lvlsInChapter.map(lvlName => {
-                if (lvName_to_scoreObj[lvlName]) {
-                    lvName_to_scoreObj[lvlName].level = lvlName;
-                    return lvName_to_scoreObj[lvlName]
+            lvlsInChapter.map(prettyLvName => {
+                const slugLvName = prettyLvName.split(' ').map(w => w.toLowerCase()).join('-')
+                if (lvName_to_scoreObj[slugLvName]) {
+                    lvName_to_scoreObj[slugLvName].level = prettyLvName;
+                    return lvName_to_scoreObj[slugLvName]
                 };
-                return { "level": lvlName };
+                return { "level": prettyLvName };
             })
         );
 
