@@ -22,7 +22,10 @@ export async function load() {
         .map(x => x.trim().split('\n'))
         .map(lvlsInChapter =>
             lvlsInChapter.map(lvlName => {
-                if (lvName_to_scoreObj[lvlName]) return lvName_to_scoreObj[lvlName];
+                if (lvName_to_scoreObj[lvlName]) {
+                    lvName_to_scoreObj[lvlName].level = lvlName;
+                    return lvName_to_scoreObj[lvlName]
+                };
                 return { "level": lvlName };
             })
         );

@@ -1,6 +1,6 @@
 Prologue
 Stabilized Water
----
+Chapter 1
 Refined Gold
 Face Powder
 Waterproof Sealant
@@ -9,7 +9,7 @@ Airship Fuel
 Precision Machine Oil
 Health Tonic
 Stamina Potion
----
+Chapter 2
 Hair Product
 Rocket Propellant
 Mist of Incapacitation
@@ -17,7 +17,7 @@ Explosive Phial
 Armor Filament
 Courage Potion
 Surrender Flare
----
+Chapter 3
 Alcohol Separation
 Water Purifier
 Seal Solvent
@@ -25,7 +25,7 @@ Climbing Rope Fiber
 Warming Tonic
 Life-Sensing Potion
 Very Dark Thread
----
+Chapter 4
 Litharge Separation
 Stain Remover
 Sword Alloy
@@ -33,14 +33,14 @@ Invisible Ink
 Purified Gold
 Alchemical Jewel
 Golden Thread
----
+Chapter 5
 Mist of Hallucination
 Timing Crystal
 Voltaic Coil
 Unstable Compound
 Curious Lipstick
 Universal Solvent
----
+Appendix
 Silver Paint
 Viscous Sludge
 Fragrant Powders
@@ -52,54 +52,54 @@ Eyedrops of Revelation
 Parade-Rocket Fuel
 Aether Detector
 Reconstructed Solvent
----
+Journal I
 Van Berlo's Wheel
 Van Berlo's Chain
 Reactive Cinnabar
 Silver Caustic
 Lambent II/IX
----
+Journal II
 Explorer's Salve
 Preservative Salt
 Sailcloth Thread
 Buoyant Cable
 Spyglass Crystal
----
+Journal III
 Ravari's Wheel
 Lubricating Filament
 Resonant Crystal
 Refined Bronze
 Ablative Crystal
----
+Journal IV
 Proof of Completeness
 Wheel Representation
 Synthesis via Alcohol
 Universal Compound
----
+Journal V
 General Anaesthetic
 Wakefulness Potion
 Suture Thread
 Blood-Stanching Powder
 Tonic of Hydration
----
+Journal VI
 Hexstabilized Salt
 Lustre
 Lamplight Gas
 Conductive Enamel
 Welding Thermite
----
+Journal VII
 Van Berlo's Pivots
 Reactive Gold
 Assassin's Filament
 Vaporous Solvent
 Alchemical Slag
----
+Journal VIII
 Explosive Victrite
 Celestial Thread
 Visillary Anaesthetic
 Animismus Buffer
 Electrum Separation
----
+Journal IX
 Hyper-volatile Gas
 Vanishing Material
 Synthetic Malachite

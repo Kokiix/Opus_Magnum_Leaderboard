@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 
-// AI generated
+// (mostly) AI generated
 
 const levelsPath = 'src/lib/assets/level_names.txt';
-const sectionsPath = 'src/lib/assets/sections.txt';
+const sectionsPath = 'src/lib/assets/chapter_names.txt';
 
 try {
     const content = fs.readFileSync(levelsPath, 'utf-8');
@@ -11,15 +11,6 @@ try {
 
     const sections = [];
     const formattedLines = [];
-
-    const slugify = (name) => {
-        return name
-            .toLowerCase()
-            .replace(/['']/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-+|-+$/g, '');
-    };
 
     const isSection = (line) => {
         return line.startsWith('Chapter') ||
@@ -33,7 +24,7 @@ try {
             if (formattedLines)
                 formattedLines.push('---'); // The divider marker
         } else {
-            formattedLines.push(slugify(line));
+            formattedLines.push(line);
         }
     });
 
