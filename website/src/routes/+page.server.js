@@ -7,7 +7,7 @@ export async function load() {
         'https://zeddvrudhdrakfbmzinh.supabase.co',
         'sb_publishable_coM9-yUpcpkfpQfBf7y6Ug_HdbicKL3');
 
-    const steamID_to_username = { "76561198818284135": "koki" };
+    const steamID_to_username = { "76561198818284135": "koki", "76561198861611607": pooki, "76561198141313239": noki };
     const { data: scores } = await supabase
         .from('scores')
         .select();
