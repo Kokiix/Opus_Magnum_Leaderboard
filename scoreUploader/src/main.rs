@@ -1,6 +1,9 @@
 use notify_debouncer_mini::*;
 use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file, upload_stats};
-use std::time::Duration;
+use std::{
+    io::{Write, stdout},
+    time::Duration,
+};
 
 fn main() {
     let steam_id = get_steam_id_folder()
@@ -31,6 +34,8 @@ fn main() {
         .watch(&get_steam_id_folder(), notify::RecursiveMode::NonRecursive)
         .unwrap();
 
+    print!("Watching for solution file...");
+    stdout().flush().unwrap();
     // Watcher runs on separate thread, so we want to totally block this one
     loop {
         std::thread::sleep(Duration::from_millis(10000));
@@ -47,6 +52,15 @@ fn handle_events(events: Vec<DebouncedEvent>, curr_stats: &mut SolutionStats) {
                     let _ = upload_stats(&new_stats);
                 }
                 *curr_stats = new_stats;
+                print!(
+                    "\rCurrent Solution: {} {} = {} Cost + {} Cycles + {} Area      ",
+                    curr_stats.level,
+                    curr_stats.sum,
+                    curr_stats.cost,
+                    curr_stats.cycles,
+                    curr_stats.area,
+                );
+                stdout().flush().unwrap();
             }
         }
     }
