@@ -103,3 +103,12 @@ Vanishing Material
 Synthetic Malachite
 Embalming Fluid
 Quintessential Medium
+---
+journal 10 here
+---
+journal 11 here
+---
+journal 12 here
+---
+journal 13 here
+---
