@@ -47,10 +47,10 @@ pub fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
         .send(body)?;
 
     // Debug print
-    println!(
-        "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
-        stats.level, stats.cycles, stats.cost, stats.area
-    );
+    // println!(
+    //     "Updated stats for {}: Cycles: {}, Cost: {}, Area: {}",
+    //     stats.level, stats.cycles, stats.cost, stats.area
+    // );
 
     return Ok(());
 }

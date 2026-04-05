@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fs, io};
 
 use opus_magnum_summer::{SolutionStats, get_steam_id_folder, parse_solution_file};
 use serde::Serialize;
@@ -17,6 +17,7 @@ fn main() {
         .into_owned();
 
     let mut best_scores: HashMap<String, SolutionStats> = HashMap::new();
+    println!("Beginning to scan files.");
     let steam_id_folder_obj = fs::read_dir(&steam_id_folder).expect("no read errors");
 
     for dir_entry in steam_id_folder_obj.flatten() {
@@ -37,12 +38,14 @@ fn main() {
     let mut batch = BatchUpload {
         stats: best_scores.into_values().collect(),
     };
+    println!("Scanned {} files.", batch.stats.len());
 
     batch
         .stats
         .iter_mut()
         .for_each(|stats| stats.steam_id = steam_id.clone());
     let body = serde_json::to_string(&batch).unwrap();
+    println!("Beginning Upload!");
     ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadMultiScores")
         .header("Content-Type", "application/json")
         .header(
@@ -52,4 +55,6 @@ fn main() {
         )
         .send(body)
         .expect("uploaded successfully");
+    println!("Upload Success! Press Enter to exit.");
+    let _ = io::stdin().read_line(&mut String::new());
 }
