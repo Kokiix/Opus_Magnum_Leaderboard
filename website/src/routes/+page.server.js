@@ -12,10 +12,16 @@ export async function load() {
         .from('scores')
         .select();
 
-    const lvName_to_scoreObj = Object.fromEntries(scores.map(score => {
+    let lvName_to_scoreObj = {};
+    scores.forEach(score => {
         score.username = steamID_to_username[score.steam_id];
-        return [score.level, score];
-    }));
+        if (lvName_to_scoreObj[score.level]) {
+            if (score.sum < lvName_to_scoreObj[score.level].sum)
+                lvName_to_scoreObj[score.level] = score;
+        } else {
+            lvName_to_scoreObj[score.level] = score;
+        }
+    });
 
     let levels = rawLevelNames
         .split('---')
