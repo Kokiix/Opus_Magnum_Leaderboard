@@ -31,17 +31,24 @@
 </table>
 
 <style>
+    table {
+        border-collapse: collapse;
+        border: 2px solid black;
+        font-size: 1.2rem;
+    }
+
     thead {
         border-bottom: 1px solid gray;
     }
 
-    table {
-        border-collapse: collapse;
-        border: 2px solid black;
-    }
-
     td {
         border: 1px solid gray;
+    }
+
+    td,
+    th {
+        text-align: center;
+        padding: 0.25em 1.5em;
     }
 
     tr.koki {
