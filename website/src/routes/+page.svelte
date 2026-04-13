@@ -17,7 +17,7 @@
         {#each data.chapterList as chapter}
             <tr><th>{chapter.title}</th></tr>
             {#each chapter.levels as score}
-                <tr>
+                <tr class={score.username}>
                     <td>{score.level}</td>
                     <td>{score.sum}</td>
                     <td>{score.username}</td>
@@ -38,5 +38,17 @@
 
     td {
         border: 1px solid gray;
+    }
+
+    tr.koki {
+        background-color: #b7e1cd;
+    }
+
+    tr.noki {
+        background-color: #a4c2f4;
+    }
+
+    tr.pooki {
+        background-color: #ffd966;
     }
 </style>
