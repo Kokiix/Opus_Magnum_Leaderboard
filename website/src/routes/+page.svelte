@@ -31,6 +31,10 @@
 </table>
 
 <style>
+    thead {
+        border-bottom: 1px solid gray;
+    }
+
     table {
         border-collapse: collapse;
         border: 2px solid black;
