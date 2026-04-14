@@ -1,11 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import rawLevelNames from '$lib/assets/level_names.txt?raw';
 import rawChapterNames from '$lib/assets/chapter_names.txt?raw'
+import { SUPABASE_KEY, SUPABASE_URL } from '$env/static/private';
 
 export async function load() {
-    const supabase = createClient( // TODO: change url when going public, move to env file
-        'https://zeddvrudhdrakfbmzinh.supabase.co',
-        'sb_publishable_coM9-yUpcpkfpQfBf7y6Ug_HdbicKL3');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const steamID_to_username = { "76561198818284135": "koki", "76561198861611607": "pooki", "76561198141313239": "noki" };
     const { data: scores } = await supabase
