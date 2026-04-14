@@ -40,7 +40,6 @@ pub fn upload_stats(stats: &SolutionStats) -> Result<(), ureq::Error> {
     ureq::post("https://opus-magnum-leaderboard.vercel.app/api/uploadSingleScore")
         .header("Content-Type", "application/json")
         .header(
-            // TODO: move into env file (and change key bc of commmit history)
             "very_secret_key",
             "QCR8VE5UNSo6XHVOa11rX0A1eXxJQW5ubkBRLWEjLS9tSHNuLjx0XC4nLEYrLTo=",
         )
