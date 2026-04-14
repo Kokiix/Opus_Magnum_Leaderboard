@@ -41,7 +41,8 @@
         border-bottom: 1px solid gray;
     }
 
-    td {
+    td,
+    th {
         border: 1px solid gray;
     }
 
